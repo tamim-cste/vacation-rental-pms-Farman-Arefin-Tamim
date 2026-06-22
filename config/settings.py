@@ -11,7 +11,9 @@ def env_bool(name, default=False):
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-# ------------------Core-------------------
+# ---------------------------------------------------------------------------
+# Core
+# ---------------------------------------------------------------------------
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "dev-only-insecure-secret-key-change-me",
@@ -21,8 +23,9 @@ ALLOWED_HOSTS = [
     h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",") if h.strip()
 ]
 
-
-# -------------------------Applications-------------------------
+# ---------------------------------------------------------------------------
+# Applications
+# ---------------------------------------------------------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -30,8 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.gis",
-    "django.contrib.postgres",
+    "django.contrib.gis",  
+    "django.contrib.postgres", 
     "rest_framework",
     "properties",
 ]
@@ -51,7 +54,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -80,8 +83,9 @@ DATABASES = {
     }
 }
 
-
-# ------------------------Passwords-----------------------
+# ---------------------------------------------------------------------------
+# Passwords
+# ---------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -89,16 +93,20 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ------------------------i18n-----------------------
+# ---------------------------------------------------------------------------
+# i18n
+# ---------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.environ.get("DJANGO_TIME_ZONE", "Asia/Dhaka")
 USE_I18N = True
 USE_TZ = True
 
-
-# --------------------Static & media files------------------------
+# ---------------------------------------------------------------------------
+# Static & media files
+# ---------------------------------------------------------------------------
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -106,18 +114,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ---------------------------------------------------------------------------
-# This is for Django REST Framework for upcoming woks
+# Django REST Framework (wired up now, used starting Day 2/3 for the API)
 # ---------------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
 }
 
-# ---------------------------------------------------------------------------
-# GDAL/GEOS library paths (usually auto-detected on Debian/Ubuntu images that
-# have gdal-bin/libgdal-dev/libgeos-dev installed; override here only if
-# GeoDjango raises "Could not find the GDAL/GEOS library" inside the
-# container).
-# ---------------------------------------------------------------------------
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH") or None
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH") or None
