@@ -1,0 +1,92 @@
+import django.contrib.gis.db.models.fields
+import pgvector.django.vector
+from django.db import migrations, models
+from django.utils.text import slugify
+import uuid
+
+
+def backfill_slugs(apps, schema_editor):
+    """Populate slug for all existing Property rows before the unique index is added."""
+    Property = apps.get_model("properties", "Property")
+    seen = set()
+    for prop in Property.objects.all():
+        base = slugify(prop.name) or f"property-{prop.pk}"
+        slug = base
+        if slug in seen or Property.objects.filter(slug=slug).exclude(pk=prop.pk).exists():
+            slug = f"{base}-{uuid.uuid4().hex[:6]}"
+        prop.slug = slug
+        prop.save(update_fields=["slug"])
+        seen.add(slug)
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("properties", "0001_initial"),
+    ]
+
+    operations = [
+        # ----------- add all non-unique fields first --------
+        migrations.AddField(
+            model_name="property",
+            name="amenities",
+            field=models.JSONField(blank=True, default=list, help_text='List of amenities, e.g. ["WiFi", "Pool", "Kitchen"]'),
+        ),
+        migrations.AddField(
+            model_name="property",
+            name="bathrooms",
+            field=models.PositiveSmallIntegerField(default=1),
+        ),
+        migrations.AddField(
+            model_name="property",
+            name="bedrooms",
+            field=models.PositiveSmallIntegerField(default=1),
+        ),
+        migrations.AddField(
+            model_name="property",
+            name="max_guests",
+            field=models.PositiveSmallIntegerField(default=2),
+        ),
+        migrations.AddField(
+            model_name="property",
+            name="price_per_night",
+            field=models.DecimalField(decimal_places=2, default=0, max_digits=10),
+        ),
+        migrations.AddField(
+            model_name="property",
+            name="property_type",
+            field=models.CharField(
+                choices=[
+                    ("villa", "Villa"),
+                    ("cottage", "Cottage"),
+                    ("apartment", "Apartment"),
+                    ("cabin", "Cabin"),
+                    ("bungalow", "Bungalow"),
+                    ("house", "House"),
+                ],
+                default="villa",
+                max_length=20,
+            ),
+        ),
+        # ----------- add slug WITHOUT unique so existing empty rows don't conflict --------
+        migrations.AddField(
+            model_name="property",
+            name="slug",
+            field=models.SlugField(max_length=300, blank=True, default="", db_index=False),
+            preserve_default=False,
+        ),
+        # ── backfill slug values on all existing rows ─────────────────────
+        migrations.RunPython(backfill_slugs, migrations.RunPython.noop),
+        # ── now it's safe to add the unique constraint ────────────────────
+        migrations.AlterField(
+            model_name="property",
+            name="slug",
+            field=models.SlugField(max_length=300, unique=True),
+        ),
+        # ----------- tidy up help_text changes on existing fields --------
+        migrations.AlterField(
+            model_name="location",
+            name="center",
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, help_text="Country center point", null=True, srid=4326),
+        ),
+    ]

@@ -1,11 +1,10 @@
-
 from django.contrib.gis.db import models
+from django.utils.text import slugify
 from pgvector.django import HnswIndex, VectorField
+import uuid
 
 
 class Location(models.Model):
-    """A country, for now (state/city hierarchy can be layered on later)."""
-
     name = models.CharField(max_length=150)
     code = models.CharField(max_length=10, unique=True, help_text="ISO country code, e.g. BD, US")
     center = models.PointField(
@@ -13,7 +12,7 @@ class Location(models.Model):
         srid=4326,
         null=True,
         blank=True,
-        help_text="Country center point (auto-filled as the centroid of its properties on import)",
+        help_text="Country center point",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,7 +28,14 @@ class Location(models.Model):
 
 
 class Property(models.Model):
-    """A single vacation rental listing."""
+
+    class PropertyType(models.TextChoices):
+        VILLA = "villa", "Villa"
+        COTTAGE = "cottage", "Cottage"
+        APARTMENT = "apartment", "Apartment"
+        CABIN = "cabin", "Cabin"
+        BUNGALOW = "bungalow", "Bungalow"
+        HOUSE = "house", "House"
 
     location = models.ForeignKey(
         Location,
@@ -37,20 +43,24 @@ class Property(models.Model):
         related_name="properties",
     )
     name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=300, unique=True, blank=True)
     description = models.TextField(blank=True)
-    center = models.PointField(
-        geography=True,
-        srid=4326,
-        null=True,
-        blank=True,
-        help_text="Property's geographic location",
+    property_type = models.CharField(
+        max_length=20,
+        choices=PropertyType.choices,
+        default=PropertyType.VILLA,
     )
-    embedding = VectorField(
-        dimensions=1536,
-        null=True,
+    bedrooms = models.PositiveSmallIntegerField(default=1)
+    bathrooms = models.PositiveSmallIntegerField(default=1)
+    max_guests = models.PositiveSmallIntegerField(default=2)
+    price_per_night = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amenities = models.JSONField(
+        default=list,
         blank=True,
-        help_text="Semantic-search embedding over name + description (populated later)",
+        help_text='List of amenities, e.g. ["WiFi", "Pool", "Kitchen"]',
     )
+    center = models.PointField(geography=True, srid=4326, null=True, blank=True)
+    embedding = VectorField(dimensions=1536, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,32 +79,32 @@ class Property(models.Model):
             ),
         ]
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.name)
+            slug = base
+            if Property.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base}-{uuid.uuid4().hex[:6]}"
+            self.slug = slug
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
+    @property
+    def primary_image(self):
+        return self.images.first()
+
 
 class PropertyImage(models.Model):
-    """An image attached to a Property. Managed as an inline under Property
-    in the admin (see admin.py)."""
-
     property = models.ForeignKey(
         Property,
         on_delete=models.CASCADE,
         related_name="images",
     )
-    image = models.ImageField(
-        upload_to="properties/%Y/%m/",
-        blank=True,
-        null=True,
-        help_text="Upload a file directly (optional if a source `url` is provided instead)",
-    )
-    url = models.URLField(
-        max_length=500,
-        blank=True,
-        help_text="Source image URL, e.g. from an imported CSV dataset",
-    )
+    image = models.ImageField(upload_to="properties/%Y/%m/", blank=True, null=True)
+    url = models.URLField(max_length=500, blank=True)
     caption = models.CharField(max_length=255, blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -104,3 +114,9 @@ class PropertyImage(models.Model):
 
     def __str__(self):
         return self.caption or f"Image for {self.property.name}"
+
+    def get_src(self):
+        """Returns the image URL regardless of whether it's a file upload or external URL."""
+        if self.image:
+            return self.image.url
+        return self.url
