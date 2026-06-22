@@ -1,19 +1,19 @@
-name,description,country_name,country_code,latitude,longitude,picture_url
-Cox's Bazar Beachfront Cottage,A breezy cottage steps away from the world's longest natural sea beach.,Bangladesh,BD,21.4272,92.0058,https://picsum.photos/seed/coxsbazar/640/480
-Sylhet Tea Garden Bungalow,Wake up surrounded by rolling green tea estates in Sylhet.,Bangladesh,BD,24.8949,91.8687,https://picsum.photos/seed/sylhet/640/480
-Dhaka City Loft,"A modern loft in Gulshan, walking distance to cafes and lakes.",Bangladesh,BD,23.8103,90.4125,https://picsum.photos/seed/dhakaloft/640/480
-Bandarban Hillside Cabin,A quiet cabin overlooking the hills of Bandarban.,Bangladesh,BD,22.1953,92.2184,https://picsum.photos/seed/bandarban/640/480
-Bali Rice Terrace Villa,Private villa surrounded by emerald rice paddies in Ubud.,Indonesia,ID,-8.5069,115.2625,https://picsum.photos/seed/baliterrace/640/480
-Seminyak Beach House,"Steps from the surf, with a private rooftop pool.",Indonesia,ID,-8.6905,115.1622,https://picsum.photos/seed/seminyak/640/480
-Phuket Cliffside Villa,Infinity pool villa with panoramic Andaman Sea views.,Thailand,TH,7.8804,98.3923,https://picsum.photos/seed/phuket/640/480
-Chiang Mai Teak House,Traditional teak house near the old city moat.,Thailand,TH,18.7883,98.9853,https://picsum.photos/seed/chiangmai/640/480
-Santorini Cliffside Suite,Whitewashed suite with caldera sunset views.,Greece,GR,36.3932,25.4615,https://picsum.photos/seed/santorini/640/480
-Athens Rooftop Apartment,Stylish apartment with an Acropolis-facing rooftop terrace.,Greece,GR,37.9838,23.7275,https://picsum.photos/seed/athens/640/480
-Tuscany Countryside Farmhouse,Restored stone farmhouse among olive groves and vineyards.,Italy,IT,43.7711,11.2486,https://picsum.photos/seed/tuscany/640/480
-Amalfi Coast Cliff Villa,Terraced villa carved into the cliffs above the Tyrrhenian Sea.,Italy,IT,40.634,14.6027,https://picsum.photos/seed/amalfi/640/480
-Kyoto Machiya Townhouse,A restored wooden townhouse minutes from the Gion district.,Japan,JP,35.0116,135.7681,https://picsum.photos/seed/kyoto/640/480
-Hakone Onsen Ryokan Room,Traditional ryokan room with a private hot-spring bath.,Japan,JP,35.2323,139.1069,https://picsum.photos/seed/hakone/640/480
-Banff Mountain Lodge,A log lodge with direct views of the Canadian Rockies.,Canada,CA,51.1784,-115.5708,https://picsum.photos/seed/banff/640/480
-Whistler Ski Chalet,"Ski-in, ski-out chalet near the Whistler gondola.",Canada,CA,50.1163,-122.9574,https://picsum.photos/seed/whistler/640/480
-Queenstown Lakeside Cabin,A cabin on the shores of Lake Wakatipu.,New Zealand,NZ,-45.0312,168.6626,https://picsum.photos/seed/queenstown/640/480
-Auckland Harbour Apartment,Modern apartment overlooking the Waitemata Harbour.,New Zealand,NZ,-36.8485,174.7633,https://picsum.photos/seed/auckland/640/480
+name,description,country_name,country_code,latitude,longitude,picture_url,property_type,bedrooms,bathrooms,max_guests,price_per_night,amenities
+Cox's Bazar Beachfront Cottage,A breezy cottage steps away from the world's longest natural sea beach.,Bangladesh,BD,21.4272,92.0058,https://picsum.photos/seed/coxsbazar/800/600,cottage,3,2,8,85,WiFi|Beach Access|Kitchen|Air Conditioning|Outdoor Shower
+Sylhet Tea Garden Bungalow,Wake up surrounded by rolling green tea estates in Sylhet.,Bangladesh,BD,24.8949,91.8687,https://picsum.photos/seed/sylhet/800/600,bungalow,2,1,4,60,WiFi|Garden|Kitchen|Hot Water|Parking
+Dhaka City Loft,A modern loft in Gulshan walking distance to cafes and lakes.,Bangladesh,BD,23.8103,90.4125,https://picsum.photos/seed/dhakaloft/800/600,apartment,1,1,2,55,WiFi|Air Conditioning|Kitchen|Security|Workspace
+Bandarban Hillside Cabin,A quiet cabin overlooking the hills of Bandarban.,Bangladesh,BD,22.1953,92.2184,https://picsum.photos/seed/bandarban/800/600,cabin,2,1,5,70,WiFi|Mountain View|Bonfire Pit|Kitchen|Hot Water
+Bali Rice Terrace Villa,Private villa surrounded by emerald rice paddies in Ubud.,Indonesia,ID,-8.5069,115.2625,https://surl.lt/gvxztu,villa,4,3,8,310,WiFi|Private Pool|Breakfast Included|Air Conditioning|Spa
+Seminyak Beach House,Steps from the surf with a private rooftop pool.,Indonesia,ID,-8.6905,115.1622,https://picsum.photos/seed/seminyak/800/600,house,3,2,6,240,WiFi|Rooftop Pool|Beach Access|Kitchen|Surfboard Rental
+Phuket Cliffside Villa,Infinity pool villa with panoramic Andaman Sea views.,Thailand,TH,7.8804,98.3923,https://picsum.photos/seed/phuket/800/600,villa,5,4,10,475,Infinity Pool|WiFi|Chef Service|Air Conditioning|Sea View|Jacuzzi
+Chiang Mai Teak House,Traditional teak house near the old city moat.,Thailand,TH,18.7883,98.9853,https://picsum.photos/seed/chiangmai/800/600,house,3,2,6,120,WiFi|Garden|Kitchen|Bicycle Rental|Air Conditioning|Laundry
+Santorini Cliffside Suite,Whitewashed suite with caldera sunset views.,Greece,GR,36.3932,25.4615,https://picsum.photos/seed/santorini/800/600,apartment,1,1,2,390,WiFi|Caldera View|Jacuzzi|Breakfast|Air Conditioning
+Athens Rooftop Apartment,Stylish apartment with an Acropolis-facing rooftop terrace.,Greece,GR,37.9838,23.7275,https://picsum.photos/seed/athens/800/600,apartment,2,1,4,180,WiFi|Rooftop Terrace|Air Conditioning|Kitchen|Washing Machine
+Tuscany Countryside Farmhouse,Restored stone farmhouse among olive groves and vineyards.,Italy,IT,43.7711,11.2486,https://picsum.photos/seed/tuscany/800/600,house,5,3,10,520,Private Pool|WiFi|Wine Cellar|Kitchen|Garden|Fireplace|Parking
+Amalfi Coast Cliff Villa,Terraced villa carved into the cliffs above the Tyrrhenian Sea.,Italy,IT,40.634,14.6027,https://picsum.photos/seed/amalfi/800/600,villa,4,3,8,680,WiFi|Sea View|Private Terrace|Kitchen|Air Conditioning|Concierge
+Kyoto Machiya Townhouse,A restored wooden townhouse minutes from the Gion district.,Japan,JP,35.0116,135.7681,https://picsum.photos/seed/kyoto/800/600,house,3,2,6,290,WiFi|Tatami Room|Japanese Garden|Kitchen|Tea Ceremony Area
+Hakone Onsen Ryokan Room,Traditional ryokan room with a private hot-spring bath.,Japan,JP,35.2323,139.1069,https://picsum.photos/seed/hakone/800/600,cottage,1,1,2,380,Private Onsen|WiFi|Breakfast|Mountain View|Traditional Futon
+Banff Mountain Lodge,A log lodge with direct views of the Canadian Rockies.,Canada,CA,51.1784,-115.5708,https://picsum.photos/seed/banff/800/600,cabin,4,3,8,440,WiFi|Mountain View|Fireplace|Hot Tub|Ski Storage|Kitchen
+Whistler Ski Chalet,Ski-in ski-out chalet near the Whistler gondola.,Canada,CA,50.1163,-122.9574,https://picsum.photos/seed/whistler/800/600,house,5,3,10,580,WiFi|Ski-in Ski-out|Hot Tub|Fireplace|Parking|Kitchen
+Queenstown Lakeside Cabin,A cabin on the shores of Lake Wakatipu.,New Zealand,NZ,-45.0312,168.6626,https://picsum.photos/seed/queenstown/800/600,cabin,2,1,4,195,WiFi|Lake View|Kitchen|Kayak Access|Fireplace
+Auckland Harbour Apartment,Modern apartment overlooking the Waitemata Harbour.,New Zealand,NZ,-36.8485,174.7633,https://picsum.photos/seed/auckland/800/600,apartment,2,1,4,160,WiFi|Harbour View|Air Conditioning|Kitchen|Gym Access|Parking

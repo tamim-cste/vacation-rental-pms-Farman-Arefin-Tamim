@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if query %}Search: {{ query }} — StayFinder{% else %}All Properties — StayFinder{% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="background:var(--navy-dark); padding: 1.5rem;">
+  <div class="container">
+    <form action="{% url 'properties:property_list' %}" method="GET" class="search-box" style="max-width:100%; box-shadow:none; background:transparent; padding:0;">
+      <div class="search-input-wrap">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        {{ form.q }}
+      </div>
+      <button type="submit" class="btn-search">Search</button>
+    </form>
+  </div>
+</div>
+
+<div class="container" style="padding: 2rem 1.5rem 4rem;">
+
+  <div class="listing-layout">
+
+    <!-- ── Sidebar Filters ── -->
+    <aside class="filters-sidebar">
+      <p class="filters-title">Filter Results</p>
+      <form action="{% url 'properties:property_list' %}" method="GET" id="filter-form">
+        {% if form.q.value %}
+          <input type="hidden" name="q" value="{{ form.q.value }}" />
+        {% endif %}
+
+        <div class="filter-group">
+          <label class="filter-label" for="{{ form.property_type.id_for_label }}">Property Type</label>
+          {{ form.property_type }}
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="{{ form.bedrooms.id_for_label }}">Bedrooms</label>
+          {{ form.bedrooms }}
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Price per Night</span>
+          <div class="price-range">
+            {{ form.min_price }}
+            {{ form.max_price }}
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="{{ form.sort.id_for_label }}">Sort By</label>
+          {{ form.sort }}
+        </div>
+
+        <button type="submit" class="btn-apply-filters">Apply Filters</button>
+        <a href="{% url 'properties:property_list' %}{% if query %}?q={{ query }}{% endif %}" class="btn-clear-filters" style="display:block; text-align:center; padding:.6rem; margin-top:.5rem; border:1.5px solid var(--border); border-radius:7px; font-size:.85rem; font-weight:600; color:var(--muted);">
+          Clear Filters
+        </a>
+      </form>
+    </aside>
+
+    <!-- ── Main Results ── -->
+    <main>
+      <div class="listing-header">
+        <p class="results-count">
+          <strong>{{ total_results }}</strong>
+          propert{{ total_results|pluralize:"y,ies" }} found
+          {% if query %} for "<strong>{{ query }}</strong>"{% endif %}
+        </p>
+      </div>
+
+      {% if page_obj.object_list %}
+        <div class="property-grid">
+          {% for property in page_obj %}
+            {% include "properties/_property_card.html" with property=property %}
+          {% endfor %}
+        </div>
+
+        <!-- ── Pagination ── -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+          {% if page_obj.has_previous %}
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}"
+               class="page-link" title="Previous">&lsaquo;</a>
+          {% else %}
+            <span class="page-link disabled">&lsaquo;</span>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a href="?{{ request.GET.urlencode }}&page={{ num }}" class="page-link">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}"
+               class="page-link" title="Next">&rsaquo;</a>
+          {% else %}
+            <span class="page-link disabled">&rsaquo;</span>
+          {% endif %}
+        </div>
+        {% endif %}
+
+      {% else %}
+        <div class="no-results">
+          <div style="font-size:3rem; margin-bottom:1rem;">🔍</div>
+          <h3>No properties found</h3>
+          <p>Try adjusting your search or filters.</p>
+          <a href="{% url 'properties:property_list' %}"
+             style="display:inline-block; margin-top:1rem; padding:.65rem 1.4rem;
+                    background:var(--navy); color:#fff; border-radius:7px; font-weight:600; font-size:.9rem;">
+            View All Properties
+          </a>
+        </div>
+      {% endif %}
+    </main>
+
+  </div>
+</div>
+{% endblock %}

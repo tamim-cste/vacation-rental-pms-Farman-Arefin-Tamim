@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}StayFinder — Find Your Perfect Vacation Rental{% endblock %}
+{% block meta_desc %}Search thousands of vacation rentals worldwide. Villas, cottages, cabins and more.{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">✦ Vacation Rentals Worldwide</p>
+    <h1>Find your next<br><em>perfect escape</em></h1>
+    <p class="hero-sub">Search from our curated collection of villas, cottages, and cabins.</p>
+
+    <form action="{% url 'properties:property_list' %}" method="GET" class="search-box">
+      <div class="search-input-wrap">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        {{ form.q }}
+      </div>
+      <button type="submit" class="btn-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Search
+      </button>
+    </form>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>{{ total_properties }}+</strong> Properties</div>
+      <div class="hero-stat"><strong>{{ total_locations }}</strong> Countries</div>
+      <div class="hero-stat"><strong>24/7</strong> Support</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Featured Properties ── -->
+{% if featured_properties %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Featured <span>Stays</span></h2>
+      <a href="{% url 'properties:property_list' %}" class="section-link">
+        View all properties
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="property-grid">
+      {% for property in featured_properties %}
+        {% include "properties/_property_card.html" with property=property %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── Browse by Country ── -->
+{% if locations %}
+<section class="section" style="background: var(--surface); padding-top: 3rem; padding-bottom: 3rem;">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom: 1.25rem;">Browse by <span>Country</span></h2>
+    <div style="display: flex; flex-wrap: wrap; gap: .6rem;">
+      {% for location in locations %}
+        <a href="{% url 'properties:property_list' %}?q={{ location.name }}"
+           style="display:inline-flex; align-items:center; gap:.4rem; background:var(--bg);
+                  border:1.5px solid var(--border); border-radius:50px; padding:.45rem 1rem;
+                  font-size:.85rem; font-weight:600; color:var(--navy);
+                  transition:all .2s ease;"
+           onmouseover="this.style.borderColor='var(--amber)';this.style.background='var(--amber-light)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg)'">
+          {{ location.name }}
+          <span style="background:var(--navy); color:#fff; border-radius:50px;
+                       font-size:.68rem; padding:.1rem .45rem; font-weight:700;">
+            {{ location.properties.count }}
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

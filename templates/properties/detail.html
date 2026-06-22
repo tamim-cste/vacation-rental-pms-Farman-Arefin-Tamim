@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ property.name }} — StayFinder{% endblock %}
+{% block meta_desc %}{{ property.description|truncatechars:155 }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  #main-hero-img { transition: opacity .25s ease; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Breadcrumb ── -->
+<nav class="breadcrumb">
+  <a href="{% url 'properties:home' %}">Home</a>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+  <a href="{% url 'properties:property_list' %}?q={{ property.location.name }}">{{ property.location.name }}</a>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+  <span>{{ property.name }}</span>
+</nav>
+
+<!-- ── Hero Image ── -->
+<div class="detail-hero">
+  {% with first=all_images.0 %}
+    {% if first %}
+      <img id="main-hero-img" class="detail-hero-img" src="{{ first.get_src }}" alt="{{ property.name }}" />
+    {% else %}
+      <div class="detail-hero-no-img">🏠</div>
+    {% endif %}
+  {% endwith %}
+</div>
+
+<!-- ── Thumbnail Strip ── -->
+{% if all_images|length > 1 %}
+<div class="gallery-strip">
+  {% for img in all_images %}
+    <div class="gallery-thumb {% if forloop.first %}active{% endif %}"
+         onclick="switchImage('{{ img.get_src }}', this)">
+      <img src="{{ img.get_src }}" alt="{{ img.caption|default:property.name }}" loading="lazy" />
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── Detail Layout ── -->
+<div class="detail-layout">
+
+  <!-- ── Main Content ── -->
+  <div>
+    <span style="display:inline-block; background:var(--navy); color:#fff; font-size:.72rem;
+                 font-weight:700; text-transform:uppercase; letter-spacing:.8px;
+                 padding:.25rem .7rem; border-radius:4px; margin-bottom:.75rem;">
+      {{ property.get_property_type_display }}
+    </span>
+
+    <h1 class="detail-title">{{ property.name }}</h1>
+
+    <p class="detail-location">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      <strong>{{ property.location.name }}</strong>
+    </p>
+
+    <!-- ── Key Stats ── -->
+    <div class="detail-stats">
+      <div class="detail-stat">
+        <span class="detail-stat-val">{{ property.bedrooms }}</span>
+        <span class="detail-stat-label">Bedroom{{ property.bedrooms|pluralize }}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-val">{{ property.bathrooms }}</span>
+        <span class="detail-stat-label">Bathroom{{ property.bathrooms|pluralize }}</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-val">{{ property.max_guests }}</span>
+        <span class="detail-stat-label">Guests</span>
+      </div>
+      <div class="detail-stat">
+        <span class="detail-stat-val">${{ property.price_per_night }}</span>
+        <span class="detail-stat-label">Per Night</span>
+      </div>
+    </div>
+
+    <!-- ── Distance from City ── -->
+    {% if distance_km is not None %}
+    <div class="distance-badge">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="12" x2="14.5" y2="14.5"/>
+        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+      </svg>
+      <span class="distance-badge-label">Distance from city center:</span>
+      <span class="distance-badge-km">{{ distance_km }} km</span>
+    </div>
+    {% endif %}
+
+    <!-- ── Description ── -->
+    {% if property.description %}
+    <div class="detail-section">
+      <h2 class="detail-section-title">About this property</h2>
+      <p class="detail-desc">{{ property.description }}</p>
+    </div>
+    {% endif %}
+
+    <!-- ── Amenities ── -->
+    {% if property.amenities %}
+    <div class="detail-section">
+      <h2 class="detail-section-title">Amenities</h2>
+      <div class="amenities-grid">
+        {% for amenity in property.amenities %}
+        <div class="amenity-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {{ amenity }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Location Info ── -->
+    <div class="detail-section">
+      <h2 class="detail-section-title">Location</h2>
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);
+                  padding:1.25rem; display:flex; align-items:center; gap:1rem;">
+        <div style="background:var(--navy); color:#fff; border-radius:50%; width:48px; height:48px;
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <p style="font-weight:700; color:var(--navy-dark); margin-bottom:.2rem;">{{ property.location.name }}</p>
+          {% if property.center %}
+          <p style="font-size:.82rem; color:var(--muted);">
+            Coordinates: {{ property.center.y|floatformat:4 }}° N, {{ property.center.x|floatformat:4 }}° E
+          </p>
+          {% endif %}
+          {% if distance_km is not None %}
+          <p style="font-size:.82rem; color:var(--amber); font-weight:600; margin-top:.2rem;">
+            📍 {{ distance_km }} km from city center
+          </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Booking Sidebar ── -->
+  <aside>
+    <div class="booking-card">
+      <p class="booking-price">${{ property.price_per_night }}<span> / night</span></p>
+      <p style="font-size:.82rem; color:var(--muted);">Taxes and fees not included</p>
+      <hr class="booking-divider" />
+      <p class="booking-meta"><strong>Type:</strong> {{ property.get_property_type_display }}</p>
+      <p class="booking-meta"><strong>Bedrooms:</strong> {{ property.bedrooms }}</p>
+      <p class="booking-meta"><strong>Bathrooms:</strong> {{ property.bathrooms }}</p>
+      <p class="booking-meta"><strong>Max Guests:</strong> {{ property.max_guests }}</p>
+      <p class="booking-meta"><strong>Country:</strong> {{ property.location.name }}</p>
+      {% if distance_km is not None %}
+      <p class="booking-meta"><strong>City Distance:</strong> {{ distance_km }} km</p>
+      {% endif %}
+      <hr class="booking-divider" />
+      <a href="#" class="btn-book">Reserve Now</a>
+      <p class="booking-note">You won't be charged yet</p>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── Similar Properties ── -->
+{% if similar_properties %}
+<div class="similar-section">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:1.5rem;">
+      More in <span>{{ property.location.name }}</span>
+    </h2>
+    <div class="property-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+      {% for prop in similar_properties %}
+        {% include "properties/_property_card.html" with property=prop %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchImage(src, thumbEl) {
+  const hero = document.getElementById('main-hero-img');
+  if (!hero) return;
+  hero.style.opacity = '0';
+  setTimeout(() => { hero.src = src; hero.style.opacity = '1'; }, 200);
+  document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+}
+</script>
+{% endblock %}

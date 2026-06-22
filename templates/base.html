@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}StayFinder — Vacation Rentals{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}Find your perfect vacation rental.{% endblock %}" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <a href="{% url 'properties:home' %}" class="navbar-brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    Stay<span>Finder</span>
+  </a>
+  <ul class="navbar-links">
+    <li><a href="{% url 'properties:home' %}">Home</a></li>
+    <li><a href="{% url 'properties:property_list' %}">All Properties</a></li>
+    <li><a href="/admin/" class="btn-nav">Admin</a></li>
+  </ul>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <p>&copy; 2025 StayFinder &mdash; Built with Django, PostGIS &amp; pgvector &bull;
+  <a href="/admin/">Admin Panel</a></p>
+</footer>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

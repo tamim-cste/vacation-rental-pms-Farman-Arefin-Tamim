@@ -1,0 +1,47 @@
+{% with img=property.images.first %}
+<article class="property-card">
+  <a href="{% url 'properties:property_detail' property.slug %}">
+    <div class="card-image-wrap">
+      {% if img %}
+        <img src="{{ img.get_src }}" alt="{{ property.name }}" loading="lazy" />
+      {% else %}
+        <div class="card-no-image">&#127968;</div>
+      {% endif %}
+      <span class="card-badge">{{ property.get_property_type_display }}</span>
+      <span class="card-price-badge">${{ property.price_per_night }}/night</span>
+    </div>
+  </a>
+  <div class="card-body">
+    <p class="card-location">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      {{ property.location.name }}
+    </p>
+    <a href="{% url 'properties:property_detail' property.slug %}" class="card-title">
+      {{ property.name }}
+    </a>
+    <div class="card-meta">
+      <span class="card-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 20v-8a2 2 0 012-2h16a2 2 0 012 2v8"/><path d="M6 10V6a6 6 0 0112 0v4"/>
+        </svg>
+        {{ property.bedrooms }} bed{{ property.bedrooms|pluralize }}
+      </span>
+      <span class="card-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 12h16"/><path d="M4 12a8 8 0 0116 0"/>
+        </svg>
+        {{ property.bathrooms }} bath{{ property.bathrooms|pluralize }}
+      </span>
+      <span class="card-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        {{ property.max_guests }} guests
+      </span>
+    </div>
+  </div>
+</article>
+{% endwith %}
