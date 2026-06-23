@@ -1,8 +1,6 @@
 FROM python:3.12-slim
 
-# GDAL/GEOS/PROJ are required by GeoDjango (django.contrib.gis) to read/write
-# spatial fields like PointField, independent of what the database itself
-# provides.
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gdal-bin \
@@ -18,10 +16,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+
+RUN pip install --no-cache-dir \
+    torch==2.6.0 \
+    --index-url https://download.pytorch.org/whl/cpu
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+
+
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 EXPOSE 8000
 
