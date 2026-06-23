@@ -11,6 +11,9 @@ def env_bool(name, default=False):
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+# ---------------------------------------------------------------------------
+# Core
+# ---------------------------------------------------------------------------
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "dev-only-insecure-secret-key-change-me",
@@ -20,7 +23,9 @@ ALLOWED_HOSTS = [
     h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",") if h.strip()
 ]
 
-#------------------------ Applications --------------------------------
+# ---------------------------------------------------------------------------
+# Applications
+# ---------------------------------------------------------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -64,7 +69,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-#------------------ Database (PostgreSQL + PostGIS, via GeoDjango's postgis backend) ------------------------
+# ---------------------------------------------------------------------------
+# Database (PostgreSQL + PostGIS, via GeoDjango's postgis backend)
+# ---------------------------------------------------------------------------
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
@@ -76,7 +83,9 @@ DATABASES = {
     }
 }
 
-# ------------------------Passwords --------------------------------
+# ---------------------------------------------------------------------------
+# Passwords
+# ---------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -84,13 +93,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-#-------------------------------- i18n --------------------------------------
+# ---------------------------------------------------------------------------
+# i18n
+# ---------------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.environ.get("DJANGO_TIME_ZONE", "Asia/Dhaka")
 USE_I18N = True
 USE_TZ = True
 
-#---------------------- Static & media files --------------------------------
+# ---------------------------------------------------------------------------
+# Static & media files
+# ---------------------------------------------------------------------------
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
