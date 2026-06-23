@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}StayFinder — Find Your Perfect Vacation Rental{% endblock %}
-{% block meta_desc %}Search thousands of vacation rentals worldwide. Villas, cottages, cabins and more.{% endblock %}
+{% block meta_desc %}Search vacation rentals worldwide. Villas, cottages, cabins and more.{% endblock %}
 
 {% block content %}
 
@@ -13,12 +13,17 @@
     <h1>Find your next<br><em>perfect escape</em></h1>
     <p class="hero-sub">Search from our curated collection of villas, cottages, and cabins.</p>
 
-    <form action="{% url 'properties:property_list' %}" method="GET" class="search-box">
-      <div class="search-input-wrap">
+    <form action="{% url 'properties:property_list' %}" method="GET" class="search-box" id="main-search-form">
+      <div class="search-input-wrap" style="position:relative;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         {{ form.q }}
+        <!-- Autocomplete dropdown -->
+        <div id="autocomplete-dropdown"
+             style="display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
+                    background:#fff; border:1.5px solid var(--border); border-radius:10px;
+                    box-shadow:var(--shadow-lg); z-index:200; overflow:hidden;"></div>
       </div>
       <button type="submit" class="btn-search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -49,7 +54,6 @@
         </svg>
       </a>
     </div>
-
     <div class="property-grid">
       {% for property in featured_properties %}
         {% include "properties/_property_card.html" with property=property %}
@@ -61,10 +65,10 @@
 
 <!-- ── Browse by Country ── -->
 {% if locations %}
-<section class="section" style="background: var(--surface); padding-top: 3rem; padding-bottom: 3rem;">
+<section class="section" style="background:var(--surface); padding-top:3rem; padding-bottom:3rem;">
   <div class="container">
-    <h2 class="section-title" style="margin-bottom: 1.25rem;">Browse by <span>Country</span></h2>
-    <div style="display: flex; flex-wrap: wrap; gap: .6rem;">
+    <h2 class="section-title" style="margin-bottom:1.25rem;">Browse by <span>Country</span></h2>
+    <div style="display:flex; flex-wrap:wrap; gap:.6rem;">
       {% for location in locations %}
         <a href="{% url 'properties:property_list' %}?q={{ location.name }}"
            style="display:inline-flex; align-items:center; gap:.4rem; background:var(--bg);
@@ -85,4 +89,63 @@
 </section>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const input    = document.querySelector('.search-input');
+  const dropdown = document.getElementById('autocomplete-dropdown');
+  if (!input || !dropdown) return;
+
+  let timer;
+
+  input.addEventListener('input', function () {
+    clearTimeout(timer);
+    const q = this.value.trim();
+    if (q.length < 2) { dropdown.style.display = 'none'; return; }
+
+    timer = setTimeout(function () {
+      fetch('/api/autocomplete/?q=' + encodeURIComponent(q))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.results || data.results.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+          }
+          dropdown.innerHTML = data.results.map(function (loc) {
+            return '<a href="' + loc.search_url + '" '
+              + 'style="display:flex;align-items:center;justify-content:space-between;'
+              + 'padding:.7rem 1rem .7rem 2.6rem;border-bottom:1px solid var(--border);'
+              + 'color:var(--text);text-decoration:none;font-size:.9rem;" '
+              + 'onmouseover="this.style.background=\'var(--bg)\'" '
+              + 'onmouseout="this.style.background=\'transparent\'">'
+              + '<span style="display:flex;align-items:center;gap:.4rem;">'
+              + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--amber);">'
+              + '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>'
+              + '</svg>'
+              + '<strong>' + loc.name + '</strong>'
+              + '</span>'
+              + '<span style="background:var(--navy);color:#fff;border-radius:50px;font-size:.7rem;padding:.15rem .5rem;font-weight:700;">'
+              + loc.property_count + ' stays'
+              + '</span>'
+              + '</a>';
+          }).join('');
+          dropdown.style.display = 'block';
+        })
+        .catch(function () { dropdown.style.display = 'none'; });
+    }, 250);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') dropdown.style.display = 'none';
+  });
+}());
+</script>
 {% endblock %}

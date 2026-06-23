@@ -1,22 +1,3 @@
-"""
-Embedding utility for semantic search.
-
-Model: all-MiniLM-L6-v2
-  - Dimensions: 384
-  - Size: ~80MB
-  - Fast, accurate for short texts like location/property names
-  - Downloaded automatically on first use (cached in ~/.cache/huggingface/)
-
-Usage:
-    from properties.embeddings import get_embedding, get_embeddings_batch
-
-    vec = get_embedding("Cox's Bazar beach cottage")
-    # → list of 384 floats
-
-    vecs = get_embeddings_batch(["Bangladesh", "Bali", "Japan"])
-    # → list of 3 x 384-float lists
-"""
-
 from __future__ import annotations
 
 import logging
@@ -24,8 +5,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-# Module-level singleton — loaded once, reused across requests.
-# Lazy so Django startup doesn't block on model load.
+
 _model = None
 
 MODEL_NAME = "all-MiniLM-L6-v2"

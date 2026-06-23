@@ -14,6 +14,12 @@ class Location(models.Model):
         blank=True,
         help_text="Country center point",
     )
+    embedding = VectorField(
+        dimensions=384,
+        null=True,
+        blank=True,
+        help_text="Semantic embedding of location name (all-MiniLM-L6-v2)",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -22,6 +28,15 @@ class Location(models.Model):
         ordering = ["name"]
         verbose_name = "Location"
         verbose_name_plural = "Locations"
+        indexes = [
+            HnswIndex(
+                name="location_embedding_hnsw_idx",
+                fields=["embedding"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_cosine_ops"],
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.code})"
@@ -60,7 +75,12 @@ class Property(models.Model):
         help_text='List of amenities, e.g. ["WiFi", "Pool", "Kitchen"]',
     )
     center = models.PointField(geography=True, srid=4326, null=True, blank=True)
-    embedding = VectorField(dimensions=1536, null=True, blank=True)
+    embedding = VectorField(
+        dimensions=384,
+        null=True,
+        blank=True,
+        help_text="Semantic embedding from all-MiniLM-L6-v2 (384d)",
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,24 +1,3 @@
-"""
-Generate and store embeddings for all Location and Property records.
-
-Usage:
-    # Generate embeddings for everything
-    python manage.py generate_embeddings
-
-    # Only locations
-    python manage.py generate_embeddings --model location
-
-    # Only properties
-    python manage.py generate_embeddings --model property
-
-    # Force regenerate even if embedding already exists
-    python manage.py generate_embeddings --force
-
-What it does:
-    Location  → embeds location.name  (e.g. "Bangladesh")
-    Property  → embeds property.name + " " + property.description
-"""
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
